@@ -3,54 +3,52 @@
       <h1 class="text-2xl font-semibold mb-4">Shopping Cart</h1>
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-3/4">
-          <div class="bg-white overflow-x-auto rounded-lg shadow-md p-6 mb-4">
-            <table class="w-full">
-              <thead>
-                <tr>
-                  <th class="text-left font-semibold">Product</th>
-                  <th class="text-left font-semibold">Price</th>
-                  <th class="text-left font-semibold">Quantity</th>
-                  <th class="text-left font-semibold">Total</th>
-                  <th class="text-left font-semibold">Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                @forelse($cart_items as $item )
-                <tr wire:key="({{$item['product_id']}})">
-                    <td class="py-4">
+            <div class="bg-white overflow-x-auto rounded-lg shadow-md p-6 mb-4">
+              <table class="w-full table-auto">
+                <thead>
+                  <tr class="bg-gray-200 text-left">
+                    <th class="px-4 py-2 font-semibold">Product</th>
+                    <th class="px-4 py-2 font-semibold">Price</th>
+                    <th class="px-4 py-2 font-semibold">Quantity</th>
+                    <th class="px-4 py-2 font-semibold">Total</th>
+                    <th class="px-4 py-2 font-semibold">Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse($cart_items as $item )
+                  <tr wire:key="({{$item['product_id']}})" class="border-b border-gray-200">
+                    <td class="px-4 py-4">
                       <div class="flex items-center">
                         <img class="h-16 w-16 mr-4" src="{{ url('storage', $item['image'])}}" alt="Product image">
-                        <span class="font-semibold">{{$item['name']}}</span>
+                        <span class="font-semibold md:text-sm">{{$item['name']}}</span>
                       </div>
                     </td>
-                    <td class="py-4 px-4">{{Number::currency($item['unit_amount'], 'IDR')}}</td>
-                    <td class="py-4">
+                    <td class="px-4 py-4">{{Number::currency($item['unit_amount'], 'IDR')}}</td>
+                    <td class="px-4 py-4">
                       <div class="flex items-center">
                         <button wire:click='decreaseQty({{$item['product_id']}})' class="border rounded-md py-2 px-4 mr-2">-</button>
                         <span class="text-center w-8">{{$item['quantity']}}</span>
                         <button wire:click='increaseQty({{$item['product_id']}})' class="border rounded-md py-2 px-4 ml-2">+</button>
                       </div>
                     </td>
-                    <td class="py-4 px-4">{{Number::currency($item['total_amount'], 'IDR')}}</td>
-                    <td>
-                        <button wire:click='removeItem({{$item['product_id']}})' class="bg-slate-300 border-2 border-slate-400 rounded-lg px-3 py-1 hover:bg-red-500 hover:text-white hover:border-red-700">
-                            <span wire:loading.remove wire:target='removeItem({{$item['product_id']}})'>remove</span>
-                            <span wire:loading wire:target='removeItem({{$item['product_id']}})'>removing...</span>
-                        </button>
+                    <td class="px-4 py-4">{{Number::currency($item['total_amount'], 'IDR')}}</td>
+                    <td class="px-4 py-4">
+                      <button wire:click='removeItem({{$item['product_id']}})' class="bg-slate-300 border-2 border-slate-400 rounded-lg px-3 py-1 hover:bg-red-500 hover:text-white hover:border-red-700">
+                        <span wire:loading.remove wire:target='removeItem({{$item['product_id']}})'>remove</span>
+                        <span wire:loading wire:target='removeItem({{$item['product_id']}})'>removing...</span>
+                      </button>
                     </td>
                   </tr>
                   @empty
                   <tr>
                     <td colspan="5" class="text-center py-6 px-4">---No items in cart----</td>
                   </tr>
-
-                @endforelse
-
-                <!-- More product rows -->
-              </tbody>
-            </table>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
         <div class="md:w-1/4">
           <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-lg font-semibold mb-4">Summary</h2>

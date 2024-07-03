@@ -3,6 +3,8 @@
 use App\Livewire\CartPage;
 use App\Livewire\HomePage;
 use App\Livewire\CancelPage;
+use App\Livewire\AccountPage;
+use App\Livewire\AccountsPage;
 use App\Livewire\SuccessPage;
 use App\Livewire\CheckoutPage;
 use App\Livewire\MyOrdersPage;
@@ -15,6 +17,7 @@ use App\Livewire\ProductDetailPage;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\ForgotPasswordPage;
+use App\Livewire\ChangePassword;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,9 +59,9 @@ Route::middleware('auth')->group(function (){
     Route::get('/my-orders', MyOrdersPage::class);
     Route::get('/my-orders/{order_id}', MyOrderDetailPage::class)->name('my-orders.show');
     Route::get('/checkout', CheckoutPage::class);
+    Route::get('/my-account', AccountsPage::class)->name('my-account');
     Route::get('/success', SuccessPage::class)->name('success');
     Route::get('/cancel', CancelPage::class)->name('cancel');
-
     Route::get('/payment/success', [CheckoutPage::class, 'success'])->name('payment.success');
 });
 

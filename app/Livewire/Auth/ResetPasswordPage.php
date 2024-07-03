@@ -43,7 +43,7 @@ class ResetPasswordPage extends Component
                     'password' => Hash::make($password),
                     ])->setRememberToken(Str::random(60));
                     $user->save();
-                    event(new PasswordReset($user));
+
             });
 
             return $status === Password::PASSWORD_RESET?redirect('/login'):session()->flash('error' , 'somthing went wrong');

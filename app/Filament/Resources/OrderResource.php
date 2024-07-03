@@ -250,11 +250,16 @@ class OrderResource extends Resource
             AddressRelationManager::class
         ];
     }
-    public static function getNavigationBadge(): ?string {
-        return static::getModel()::count();
+    public static function getNavigationBadge(): ?string
+    {
+        $newOrdersCount = static::getModel()::where('status', 'new')->count();
+        return (string) $newOrdersCount;
     }
-    public static function getNavigationBadgeColor(): string|array|null {
-        return static::getModel()::count() > 10 ? 'success' : 'danger';
+
+    public static function getNavigationBadgeColor(): string|array|null
+    {
+        $newOrdersCount = static::getModel()::where('status', 'new')->count();
+        return $newOrdersCount > 0 ? 'danger' : 'success';
     }
     public static function getPages(): array
     {
