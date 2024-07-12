@@ -8,6 +8,9 @@ use Midtrans\Config;
 use App\Models\order;
 use App\Models\address;
 use Livewire\Component;
+use App\Models\province;
+use App\Models\addressuser;
+use App\Models\subprovince;
 use Illuminate\Http\Request;
 use Midtrans\PaymentRequest;
 use Stripe\Checkout\Session;
@@ -26,15 +29,111 @@ class CheckoutPage extends Component
     public $street_address;
     public $city;
     public $province;
-    public $zip_code;
+    public $village;
+    public $village_district;
+    public $postal_code;
+
     public $payment_method;
 
+    public $selectedProvince = null;
+    public $selectedCity = null;
+    public $selectedVillage = null;
+    public $selectedVillageDistrict = null;
+    public $selectedPostalcode = null;
 
+    public $useMyAddressToggle = false;
+    public $hasAddress = false;
     public function mount(){
+
         $cart_items = CartManagement::getCartItemsFromCookie();
         if(count($cart_items) == 0){
             return redirect('/products');
             }
+        $this->province = province::all();
+        $this->hasAddress = AddressUser::where('user_id', Auth::id())->exists();
+
+    }
+    public function updatedUseMyAddressToggle()
+    {
+        if ($this->useMyAddressToggle) {
+            $this->useMyAddress();
+        } else {
+            $this->resetForm();
+        }
+    }
+    public function useMyAddress()
+    {
+        // Ganti ini dengan metode yang sesuai untuk mendapatkan alamat pengguna saat ini
+        $address = addressuser::where('user_id', Auth::id())->firstOrFail();
+
+        $this->first_name = $address->first_name;
+            $this->last_name = $address->last_name;
+            $this->phone = $address->phone;
+            $this->street_address = $address->street_address;
+            $this->selectedProvince = $address->province;
+            $province = Province::where('province_name', $address->province)->first();
+            if ($province) {
+                $this->selectedProvince = $province->province_code;
+            }
+            $this->updatedSelectedProvince($this->selectedProvince);
+
+    // Handle city selection and update villages
+    $this->selectedCity = $address->city;
+    $this->updatedSelectedCity($this->selectedCity);
+
+    // Handle village selection and update village districts
+    $this->selectedVillage = $address->village;
+    $this->updatedSelectedVillage($this->selectedVillage);
+
+    // Handle village district selection and update postal codes
+    $this->selectedVillageDistrict = $address->village_district;
+    $this->updatedSelectedVillageDistrict($this->selectedVillageDistrict);
+
+    // Set the postal code
+    $this->selectedPostalcode = $address->zip_code;
+    }
+    public function resetForm()
+    {
+        $this->first_name = null;
+        $this->last_name = null;
+        $this->phone = null;
+        $this->street_address = null;
+        $this->selectedProvince = null;
+        $this->selectedCity = null;
+        $this->selectedVillage = null;
+        $this->selectedVillageDistrict = null;
+        $this->selectedPostalcode = null;
+    }
+    public function updatedSelectedProvince($province)
+    {
+
+        $this->city = subprovince::where('province_code', $province)->groupBy('city')
+        ->pluck('city');
+
+        $this->selectedCity = null;
+        $this->selectedVillage = null;
+        $this->selectedVillageDistrict = null;
+        $this->selectedPostalcode = null;
+    }
+    public function updatedSelectedCity($city)
+    {
+        $this->village = Subprovince::where('city', $city)->groupBy('sub_district')
+        ->pluck('sub_district');
+        $this->selectedVillage = null;
+        $this->selectedVillageDistrict = null;
+        $this->selectedPostalcode = null;
+    }
+
+    public function updatedSelectedVillage($village)
+    {
+        $this->village_district = Subprovince::where('sub_district', $village)->groupBy('urban')
+        ->pluck('urban');
+        $this->selectedVillageDistrict = null;
+        $this->selectedPostalcode = null;
+    }
+    public function updatedSelectedVillageDistrict($village_district)
+    {
+        $this->postal_code = Subprovince::where('urban', $village_district)->get();
     }
 
     public function placeOrder(){
@@ -44,10 +143,14 @@ class CheckoutPage extends Component
             'last_name' => 'required',
             'phone' => 'required',
             'street_address' => 'required',
-            'city' => 'required',
-            'province' => 'required',
-            'zip_code' => 'required',
-            'payment_method' => 'required',
+            'selectedProvince' => 'required',
+            'selectedCity' => 'required',
+            'selectedVillage' => 'required',
+            'selectedVillageDistrict' => 'required',
+            'selectedPostalcode' => 'required',
+        ], [
+            'selectedVillage.required' => 'The selected district field is required.',
+            'selectedVillageDistrict.required' => 'The selected sub-district field is required.',
         ]);
 
 
@@ -79,17 +182,20 @@ class CheckoutPage extends Component
         $order->shipping_method = 'none';
         $order->notes = 'Order Placed by ' . auth()->user()->name;
 
+        $provinceName = Province::where('province_code', $this->selectedProvince)->first()->province_name;
         $address = new address();
         $address->first_name = $this->first_name;
         $address->last_name = $this->last_name;
         $address->phone = $this->phone;
         $address->street_address = $this->street_address;
-        $address->city = $this->city;
-        $address->province = $this->province;
-        $address->zip_code = $this->zip_code;
+        $address->province = $provinceName;
+        $address->city = $this->selectedCity;
+        $address->village = $this->selectedVillage;
+        $address->village_district = $this->selectedVillageDistrict;
+        $address->zip_code = $this->selectedPostalcode;
 
         $redirect_url = '';
-
+        $order_id = uniqid();
 
        if ($this->payment_method == 'midtrans') {
 
@@ -98,7 +204,7 @@ class CheckoutPage extends Component
             \Midtrans\Config::$isSanitized = true;
             \Midtrans\Config::$is3ds = true;
             \Midtrans\Config::$overrideNotifUrl = route('payment.callback');
-            $order_id = uniqid(); // Gunakan ID yang unik
+          // Gunakan ID yang unik
             $gross_amount = $order->grand_total; // Jumlah total transaksi dalam IDR
 
             $params = array(
@@ -160,7 +266,6 @@ class CheckoutPage extends Component
     $calculatedSignatureKey = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
 
     if ($signatureKey !== $calculatedSignatureKey) {
-        Log::warning('Midtrans signature verification failed.');
         return response()->json(['status' => 'error', 'message' => 'Signature verification failed.'], 403);
     }
 

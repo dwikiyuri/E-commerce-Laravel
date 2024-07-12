@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Filament\Resources\OrderResource\RelationManagers;
+namespace App\Filament\Resources\UserResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\address;
 use App\Models\province;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\subprovince;
-use Illuminate\Support\Facades\Http;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -18,10 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Resources\RelationManagers\RelationManager;
 
-class AddressRelationManager extends RelationManager
+class AddressuserRelationManager extends RelationManager
 {
-    protected static string $relationship = 'address';
-
+    protected static string $relationship = 'addressuser';
 
     public function form(Form $form): Form
     {
@@ -144,8 +141,9 @@ class AddressRelationManager extends RelationManager
                 Textarea::make('street_address')
                 ->required()
                 ->columnSpanFull(),
-                ]);
-            }
+
+            ]);
+    }
 
     public function table(Table $table): Table
     {

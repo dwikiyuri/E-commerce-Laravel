@@ -4,12 +4,14 @@ namespace App\Livewire;
 
 use App\Models\User;
 use Livewire\Component;
+use App\Models\addressuser;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Title;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
-
+#[Title('My Account - YuriGshop')]
 class AccountsPage extends Component
 {
     public $user;
@@ -39,9 +41,11 @@ class AccountsPage extends Component
     }
     public function render()
     {
-       ;
+        $myaddress = addressuser::where('user_id', $this->user->id)->first();
+
         return view('livewire.my-account-page', [
             'user' => $this->user,
+            'myaddress' => $myaddress,
         ]);
     }
 

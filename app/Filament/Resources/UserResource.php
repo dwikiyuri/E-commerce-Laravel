@@ -2,21 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Filament\Resources\UserResource\RelationManagers\OrderRelationManager;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Forms\FormsComponent;
-use Filament\Pages\Page;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Pages\Page;
 use Filament\Tables\Table;
 use GuzzleHttp\Promise\Create;
+use Filament\Resources\Resource;
+use Filament\Forms\FormsComponent;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\OrderRelationManager;
+use App\Filament\Resources\OrderResource\RelationManagers\AddressRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\AddressuserRelationManager;
 
 class UserResource extends Resource
 {
@@ -89,7 +91,8 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            OrderRelationManager::class
+            OrderRelationManager::class,
+            AddressuserRelationManager::class
         ];
     }
     public static function getGloballySearchableAttributes(): array

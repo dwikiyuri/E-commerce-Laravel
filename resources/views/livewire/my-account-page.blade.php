@@ -22,8 +22,66 @@
                   <label class="block text-gray-600 dark:text-gray-300">Email:</label>
                   <p class="text-gray-800 dark:text-gray-200">{{ $user->email }}</p>
                 </div>
-
               </div>
+              <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg">
+                @if (session('message'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('message') }}</span>
+                </div>
+                @endif
+                <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4 md:mb-0">My Address</h2>
+                    @if($myaddress)
+                    <a href="/my-account/edit-address/{{$myaddress->id}}" class="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4  rounded w-full md:w-auto">
+                        Edit Address
+                    </a>
+                    @endif
+                </div>
+                @if($myaddress)
+                <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">Full Name:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->first_name }}{{ $myaddress->last_name }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">Phone Number:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->phone }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">Street Address:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->street_address }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">Province:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->province }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">City:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->city }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">District:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->village }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">Sub-District:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->village_district }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-600 dark:text-gray-300">Postal Code:</label>
+                        <p class="text-gray-800 dark:text-gray-200">{{ $myaddress->zip_code }}</p>
+                    </div>
+
+                </div>
+                @else
+                <div class="w-full flex justify-center items-center">
+                    <div class="mb-4 text-center bg-slate-100 p-6 md:p-10 rounded-lg shadow-lg">
+                        <p class="text-gray-600">You have not added an address yet</p>
+                        <a class="font-semibold hover:text-blue-500" href="/create-address">Add Address</a>
+                    </div>
+            @endif
+            </div>
+
               <div class="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg">
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Change Password</h2>
                 @if (session()->has('status'))

@@ -2,17 +2,15 @@
 
 namespace App\Models;
 
-use App\Models\province;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class address extends Model
+class addressuser extends Model
 {
     use HasFactory;
-    protected $table = 'address';
+    protected $table = 'addressusers';
     protected $fillable = [
-        'order_id',
+        'user_id',
         'first_name',
         'last_name',
         'phone',
@@ -24,14 +22,11 @@ class address extends Model
         'zip_code'
     ];
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class);
+    public function addressuser(){
+        return $this->belongsTo(User::class);
     }
-
     public function getFullNameAttribute()
     {
         return "{$this->first_name} {$this->last_name}";
     }
-
 }

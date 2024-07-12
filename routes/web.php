@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Auth\ForgotPasswordPage;
 use App\Livewire\ChangePassword;
+use App\Livewire\CreateAddress;
+use App\Livewire\EditAddress;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +62,8 @@ Route::middleware('auth')->group(function (){
     Route::get('/my-orders/{order_id}', MyOrderDetailPage::class)->name('my-orders.show');
     Route::get('/checkout', CheckoutPage::class);
     Route::get('/my-account', AccountsPage::class)->name('my-account');
+    Route::get('/create-address', CreateAddress::class);
+    Route::get('/my-account/edit-address/{myaddress_id}', EditAddress::class);
     Route::get('/success', SuccessPage::class)->name('success');
     Route::get('/cancel', CancelPage::class)->name('cancel');
     Route::get('/payment/success', [CheckoutPage::class, 'success'])->name('payment.success');

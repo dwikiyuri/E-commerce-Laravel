@@ -9,9 +9,18 @@
                 <div class="bg-white rounded-xl shadow p-4 sm:p-7 dark:bg-slate-900">
                     <!-- Shipping Address -->
                     <div class="mb-6">
-                        <h2 class="text-xl font-bold underline text-gray-700 dark:text-white mb-2">
-                            Shipping Address
-                        </h2>
+                            <div class="flex items-center justify-between mb-2">
+                                <h2 class="text-xl font-bold underline text-gray-700 dark:text-white">
+                                    Shipping Address
+                                </h2>
+                                @if($hasAddress)
+                                      <div class="flex items-center">
+                                        <input type="checkbox" id="hs-small-switch" wire:model.live='useMyAddressToggle' class="relative w-11 h-6 p-px bg-gray-500 border-transparent text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:ring-blue-600 disabled:opacity-50 disabled:pointer-events-none checked:bg-none checked:text-blue-600 checked:border-blue-600 focus:checked:border-blue-600 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-600
+                                        before:inline-block before:size-5 before:bg-white checked:before:bg-blue-200 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:shadow before:transform before:ring-0 before:transition before:ease-in-out before:duration-200 dark:before:bg-neutral-400 dark:checked:before:bg-blue-200">
+                                        <label for="hs-small-switch" class="text-sm text-gray-500 ms-3 dark:text-neutral-400">Use My Address</label>
+                                      </div>
+                                      @endif
+                            </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-gray-700 dark:text-white mb-1" for="first_name">
@@ -54,37 +63,87 @@
                                 @error('street_address') {{ $message }} @enderror
                             </div>
                         </div>
-                        <div class="mt-4">
-                            <label class="block text-gray-700 dark:text-white mb-1" for="city">
-                                Province
-                            </label>
-                            <input wire:model='province' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="city" type="text">
-                            </input>
-                            <div class="text-red-500 text-sm">
-                                @error('province') {{ $message }} @enderror
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-gray-700 dark:text-white mb-1" for="city">
+                                    Province
+                                </label>
+                                <select wire:model.live='selectedProvince' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="city" type="text">
+                                    <option value="">Select a Province</option>
+                                    @foreach($province as $prov)
+                                        <option value="{{ $prov->province_code }}" >{{ $prov->province_name }}</option>
+                                    @endforeach
+                                </select>
+                                <div class="text-red-500 text-sm">
+                                    @error('selectedProvince') {{ $message }} @enderror
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 dark:text-white mb-1" for="state">
+                                    City
+                                </label>
+                                <select wire:model.live="selectedCity" wire:key='{{$selectedCity}}' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="state" type="text">
+                                    <option value="">Select a City</option>
+                                    @if(!empty($city))
+                                        @foreach($city as $cityItem)
+                                        <option  value="{{ $cityItem }}" >{{ $cityItem }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                                <div class="text-red-500 text-sm">
+                                    @error('selectedCity') {{ $message }} @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4 mt-4">
                             <div>
                                 <label class="block text-gray-700 dark:text-white mb-1" for="state">
-                                    City
+                                   District
                                 </label>
-                                <input wire:model='city' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="state" type="text">
-                                </input>
+                                <select wire:model.live="selectedVillage" wire:key='{{$selectedVillage}}' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="state" type="text">
+                                <option value="">Select a District</option>
+                                    @if(!empty($village))
+                                        @foreach($village as $villages)
+                                            <option value="{{ $villages }}">{{ $villages}}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                                 <div class="text-red-500 text-sm">
-                                    @error('city') {{ $message }} @enderror
+                                    @error('selectedVillage') {{ $message }} @enderror
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-gray-700 dark:text-white mb-1" for="zip">
-                                    ZIP Code
+                                    Sub District
                                 </label>
-                                <input wire:model='zip_code' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="zip" type="text">
-                                </input>
+                                <select wire:model.live="selectedVillageDistrict" wire:key='{{$selectedVillageDistrict}}' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="zip" type="text">
+                                    <option value="" >Select a Sub-District</option>
+                                    @if(!empty($village_district))
+                                        @foreach($village_district as $villagess)
+                                            <option value="{{ $villagess }}">{{ $villagess }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                                 <div class="text-red-500 text-sm">
-                                    @error('zip_code') {{ $message }} @enderror
+                                    @error('selectedVillageDistrict') {{ $message }} @enderror
                                 </div>
                             </div>
+                        </div>
+                        <div class=" mt-4">
+                                <label class="block text-gray-700 dark:text-white mb-1" for="zip">
+                                    ZIP Code
+                                </label>
+                                <select wire:model.live="selectedPostalcode" wire:key='{{$selectedPostalcode}}' class="w-full rounded-lg border py-2 px-3 dark:bg-gray-700 dark:text-white dark:border-none" id="zip" type="text">
+                                    <option value="">Select a Postal Code</option>
+                                    @if(!empty($postal_code))
+                                    @foreach($postal_code as $postal)
+                                        <option value="{{ $postal->postal_code }}">{{ $postal->postal_code }}</option>
+                                    @endforeach
+                                 @endif
+                                </select>
+                                <div class="text-red-500 text-sm">
+                                    @error('selectedPostalcode') {{ $message }} @enderror
+                                </div>
                         </div>
                     </div>
                     <div class="text-lg font-semibold mb-4">
